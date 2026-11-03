@@ -21,12 +21,12 @@ pcall(function()
 
     -- Extended Gizmo
     executeRemote(
-        "https://github.com/Edvxtrykkkkk/plugin/blob/main/src/ExtendedGizmo.lua"
+        "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/ExtendedGizmo.lua"
     )
 
     -- Toolbox Beta
     executeRemote(
-        "https://raw.githubusercontent.com/Edvxtrykkkkk/plugin/refs/heads/main/src/Store.lua"
+        "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/store.lua"
     )
 
     -- App
