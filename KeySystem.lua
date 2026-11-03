@@ -40,7 +40,7 @@ Ophyn.new({
 
     -- Script
     Callback = function(key)
-        loadstring(game:HttpGet( "https://raw.githubusercontent.com/Edvxtrykkkkk/plugin/refs/heads/main/main.lua"
+        loadstring(game:HttpGet( "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/main.lua"
         ))()
     end,
 })
