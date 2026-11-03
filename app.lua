@@ -427,31 +427,31 @@ local AppList = {
 		App = "ARCHIMEDES",
 		Icon = "rbxassetid://87188567501065",
 		TextLabel = "ARCHIMEDES",
-		RawLink = "https://raw.githubusercontent.com/narakuhub/plugin-tools/refs/heads/main/tools/ArchSementara.lua",
+		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/archimedes.lua",
 	},
 	{
 		App = "LUCIDE ICONS",
 		Icon = "rbxassetid://130721982350900",
 		TextLabel = "LUCIDE ICONS",
-		RawLink = "https://raw.githubusercontent.com/narakuhub/plugin-tools/refs/heads/main/tools/lucide.lua",
+		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/lucide.lua",
 	},
 	{
 		App = "FLY CAMERA",
 		Icon = "rbxassetid://80451686744860",
 		TextLabel = "FLY CAMERA",
-		RawLink = "https://raw.githubusercontent.com/narakuhub/plugin-tools/refs/heads/main/tools/FlyCamera.lua",
+		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/FlyCameraFokus.lua",
 	},
 	{
 		App = "FLY GUI",
 		Icon = "rbxassetid://126428723702595",
 		TextLabel = "FLY GUI",
-		RawLink = "https://raw.githubusercontent.com/narakuhub/plugin-tools/refs/heads/main/tools/flygui.lua",
+		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/FlyCaracter.lua",
 	},
 	{
-		App = "TOOLBOX",
+		App = "STORE",
 		Icon = "rbxassetid://79190391061047",
-		TextLabel = "TOOLBOX",
-		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/plugin/refs/heads/main/pluginbeta.lua",
+		TextLabel = "STORE",
+		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/store.lua",
 	},
 }
 
