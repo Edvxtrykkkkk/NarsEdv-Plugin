@@ -441,6 +441,18 @@ local AppList = {
 		TextLabel = "STORE",
 		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/store.lua",
 	},
+	{
+		App = "IMPORT UI",
+		Icon = "rbxassetid://107695264369312",
+		TextLabel = "IMPORT UI",
+		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/ImportUI.lua",
+	},
+	{
+		App = "IMPORT FILE",
+		Icon = "rbxassetid://93307473217005",
+		TextLabel = "IMPORT FILE",
+		RawLink = "",
+	},
 }
 
 local OPEN_TEXT = "N'EDV"
