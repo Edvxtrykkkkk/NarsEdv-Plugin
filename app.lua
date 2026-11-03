@@ -403,25 +403,13 @@ local AppList = {
 		App = "TERRAIN",
 		Icon = "rbxassetid://129361331543944",
 		TextLabel = "TERRAIN",
-		RawLink = "https://raw.githubusercontent.com/narakuhub/plugin-tools/refs/heads/main/tools/terrain.lua",
-	},
-	{
-		App = "TERRAIN V0.02",
-		Icon = "rbxassetid://129361331543944",
-		TextLabel = "TERRAIN V0.02",
 		RawLink = "https://raw.githubusercontent.com/narakuhub/plugin-tools/refs/heads/main/tools/terrain2.lua",
 	},
 	{
-		App = "EDITOR CODE",
+		App = "ECODE",
 		Icon = "rbxassetid://130150477351734",
-		TextLabel = "EDITOR CODE",
+		TextLabel = "ECODE",
 		RawLink = "https://raw.githubusercontent.com/narakuhub/narsenvr-editorcode/refs/heads/main/load.lua",
-	},
-	{
-		App = "AUDIO PLAY",
-		Icon = "rbxassetid://136460394404917",
-		TextLabel = "AUDIO PLAY",
-		RawLink = "https://raw.githubusercontent.com/narakuhub/plugin-tools/refs/heads/main/tools/audio.lua",
 	},
 	{
 		App = "ARCHIMEDES",
