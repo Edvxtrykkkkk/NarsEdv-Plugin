@@ -32,7 +32,7 @@ local function generateName()
 	for i = 1, 32 do
 		chars[i] = string.char(math.random(97, 122))
 	end
-	return "_narsedv_" .. table.concat(chars)
+	return "_ECNarsEdv_" .. table.concat(chars)
 end
 
 local Services = {
