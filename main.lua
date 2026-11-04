@@ -11,8 +11,6 @@ local function executeRemote(name, url)
 
     if not success then
         warn("[NARS EDV] " .. name .. " Error: " .. tostring(err))
-    else
-        print("[NARS EDV] " .. name .. " Loaded")
     end
 end
 
