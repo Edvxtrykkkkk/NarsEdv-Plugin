@@ -31,6 +31,6 @@ pcall(function()
 
     -- App
     executeRemote(
-        "https://raw.githubusercontent.com/Edvxtrykkkkk/plugin/refs/heads/main/app.lua"
+        "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/app.lua"
     )
 end)
