@@ -66,7 +66,7 @@ end
 local THEME = {
 	Background = Color3.fromRGB(17, 17, 17),
 	Bar = Color3.fromRGB(22, 22, 22),
-	Card = Color3.fromRGB(26, 26, 26),
+	Card = Color3.fromRGB(17, 17, 17),
 	Text = Color3.fromRGB(235, 235, 235),
 	Icon = Color3.fromRGB(210, 210, 210),
 	Black = Color3.fromRGB(0, 0, 0),
