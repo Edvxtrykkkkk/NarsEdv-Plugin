@@ -409,13 +409,7 @@ local AppList = {
 		App = "ECODE",
 		Icon = "rbxassetid://130150477351734",
 		TextLabel = "ECODE",
-		RawLink = "https://raw.githubusercontent.com/narakuhub/narsenvr-editorcode/refs/heads/main/load.lua",
-	},
-	{
-		App = "ARCHIMEDES",
-		Icon = "rbxassetid://87188567501065",
-		TextLabel = "ARCHIMEDES",
-		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/archimedes.lua",
+		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/Ecode.lua",
 	},
 	{
 		App = "LUCIDE ICONS",
@@ -451,7 +445,7 @@ local AppList = {
 		App = "IMPORT FILE",
 		Icon = "rbxassetid://93307473217005",
 		TextLabel = "IMPORT FILE",
-		RawLink = "",
+		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/Importer.lua",
 	},
 }
 
