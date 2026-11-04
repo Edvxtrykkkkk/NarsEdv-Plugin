@@ -89,7 +89,7 @@ local AppList = {
 		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/Ecode.lua",
 	},
 	{
-		App = "LUCIDE ICONS",
+		App = "LUCIDE",
 		Icon = "rbxassetid://130721982350900",
 		TextLabel = "LUCIDE ICONS",
 		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/lucide.lua",
@@ -111,12 +111,6 @@ local AppList = {
 		Icon = "rbxassetid://79190391061047",
 		TextLabel = "STORE",
 		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/store.lua",
-	},
-	{
-		App = "IMPORT UI",
-		Icon = "rbxassetid://107695264369312",
-		TextLabel = "IMPORT UI",
-		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/ImportUI.lua",
 	},
 	{
 		App = "IMPORT FILE",
