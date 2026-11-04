@@ -3,19 +3,17 @@ pcall(function()
         return
     end
 
-    local function decodeUrl(encoded)
-        return (encoded:gsub("..", function(hex)
-            return string.char(tonumber(hex, 16))
-        end))
-    end
+    local function executeRemote(url)
+        local success, result = pcall(function()
+            local source = game:HttpGet(url)
+            local fn = loadstring(source)
 
-    local function executeRemote(encodedUrl)
-        local url = decodeUrl(encodedUrl)
-        local source = game:HttpGet(url)
-        local fn = loadstring(source)
-
-        if fn then
+            assert(fn, "Failed to compile remote source")
             fn()
+        end)
+
+        if not success then
+            warn("[NARS EDV] " .. tostring(result))
         end
     end
 
