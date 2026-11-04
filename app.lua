@@ -4,7 +4,7 @@ local TweenService = game:GetService("TweenService")
 local executorEnv = getfenv()
 
 local function warnError(message)
-	warn("[N'EDV] " .. tostring(message))
+	warn("[server] " .. tostring(message))
 end
 
 local function generateName()
@@ -12,7 +12,7 @@ local function generateName()
 	for i = 1, 32 do
 		bytes[i] = string.char(math.random(0, 255))
 	end
-	return "*narsedv*" .. table.concat(bytes)
+	return "_AppNarsEdv_" .. table.concat(bytes)
 end
 
 local function randomizeGuiNames(root)
@@ -458,7 +458,7 @@ Open.Activated:Connect(togglePanel)
 
 local function executeApp(data)
 	if type(data.RawLink) ~= "string" or data.RawLink == "" then
-		warnError("RawLink belum ditentukan: " .. tostring(data.App))
+		warnError("src belum ditentukan: " .. tostring(data.App))
 		return
 	end
 
