@@ -1,4 +1,3 @@
-
 local function executeRemote(name, url)
     -- Download source
     local downloadOK, source = pcall(function()
