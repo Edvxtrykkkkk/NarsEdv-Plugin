@@ -733,8 +733,8 @@ local function buildInterface()
 
 	dropdownSelectLabel.Name = generateName()
 	dropdownSelectLabel.AnchorPoint = Vector2.new(0.0, 0.0)
-	dropdownSelectLabel.Size = UDim2.fromOffset(68, 22)
-	dropdownSelectLabel.Position = UDim2.fromOffset(5, 0)
+	dropdownSelectLabel.Size = UDim2.fromOffset(65, 22)
+	dropdownSelectLabel.Position = UDim2.fromOffset(10, 0)
 	dropdownSelectLabel.Rotation = 0
 	dropdownSelectLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	dropdownSelectLabel.BackgroundTransparency = 1
@@ -750,7 +750,7 @@ local function buildInterface()
 	dropdownSelectLabel.TextWrapped = false
 	dropdownSelectLabel.TextTransparency = 0
 	dropdownSelectLabel.Font = Enum.Font.GothamMedium
-	dropdownSelectLabel.TextXAlignment = Enum.TextXAlignment.Center
+	dropdownSelectLabel.TextXAlignment = Enum.TextXAlignment.Left
 	dropdownSelectLabel.TextYAlignment = Enum.TextYAlignment.Center
 	dropdownSelectLabel.RichText = false
 	dropdownSelectLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
