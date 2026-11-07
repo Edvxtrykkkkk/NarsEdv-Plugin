@@ -19,13 +19,6 @@ executeRemote(
     "Extended Gizmo",
     "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/ExtendedGizmo.lua"
 )
-
--- Toolbox Beta
-executeRemote(
-    "Toolbox Beta",
-    "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/store.lua"
-)
-
 -- App
 executeRemote(
     "App",
