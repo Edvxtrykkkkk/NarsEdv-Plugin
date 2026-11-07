@@ -170,7 +170,7 @@ local Plugins = {
         Name = "Lucide Icon",
         Description = "Search and insert 1000+ vector Lucide icons directly into Roblox UI.",
         Version = "1.1.0",
-        Url = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/lucide.lua",
+        Url = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/lucideIcons.lua",
         Thumbnail = "rbxassetid://123479937842693",
         Colors = {
             Color3.fromRGB(244, 63, 94),
