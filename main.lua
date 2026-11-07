@@ -1,49 +1,52 @@
+-- load
 local function executeRemote(name, url)
-    -- Download source
-    local downloadOK, source = pcall(function()
+    -- Download
+    local success, source = pcall(function()
         return game:HttpGet(url)
     end)
 
-    if not downloadOK then
-        warn("[NARS EDV] " .. name .. " Download Error: " .. tostring(source))
+    if not success then
+        warn("[NARS EDV] " .. name .. " | Download Error: " .. tostring(source))
         return false
     end
 
-    if type(source) ~= "string" or #source == 0 then
-        warn("[NARS EDV] " .. name .. " Error: Source kosong")
+    if type(source) ~= "string" or source == "" then
+        warn("[NARS EDV] " .. name .. " | Source is empty")
         return false
     end
 
-    -- Compile source
-    local compileOK, fn, compileError = pcall(function()
-        return loadstring(source)
-    end)
+    -- Compile
+    local compiled, callback = pcall(loadstring, source)
 
-    if not compileOK or type(fn) ~= "function" then
-        warn("[NARS EDV] " .. name .. " Compile Error: " .. tostring(compileError or fn))
+    if not compiled or type(callback) ~= "function" then
+        warn("[NARS EDV] " .. name .. " | Compile Error: " .. tostring(callback))
         return false
     end
 
-    -- Execute source
-    local executeOK, result = pcall(fn)
+    -- Execute
+    local executed, result = pcall(callback)
 
-    if not executeOK then
-        warn("[NARS EDV] " .. name .. " Runtime Error: " .. tostring(result))
+    if not executed then
+        warn("[NARS EDV] " .. name .. " | Runtime Error: " .. tostring(result))
         return false
     end
 
-    print("[NARS EDV] " .. name .. " Loaded")
     return true
 end
 
--- 1. Extended Gizmo
-executeRemote(
-    "Extended Gizmo",
-    "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/ExtendedGizmo.lua"
-)
+-- Modules
+local Modules = {
+    {
+        Name = "Extended Gizmo",
+        URL = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/ExtendedGizmo.lua"
+    },
+    {
+        Name = "App",
+        URL = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/app.lua"
+    }
+}
 
--- 2. Main App
-executeRemote(
-    "App",
-    "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/app.lua"
-)
+-- Load Modules
+for _, module in ipairs(Modules) do
+    executeRemote(module.Name, module.URL)
+end
