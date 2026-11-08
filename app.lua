@@ -1,10 +1,18 @@
 -- Nars Edv | Plugin app
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
 
 local executorEnv = getfenv()
+local sharedEnv = executorEnv
+if type(executorEnv.getgenv) == "function" then
+    local okEnv, genv = pcall(executorEnv.getgenv)
+    if okEnv and type(genv) == "table" then
+        sharedEnv = genv
+    end
+end
+local registryKey = "__plugin_app_gui"
 
 local function resolveHost()
     local getHiddenUi = executorEnv.gethui or executorEnv.get_hidden_gui
@@ -47,13 +55,25 @@ end
 local host = resolveHost()
 local GUI = {}
 
+local nameRanges = { { 48, 57 }, { 65, 90 }, { 97, 122 } }
+
 local function generateName()
+    local length = math.random(18, 32)
     local bytes = {}
-    for i = 1, 32 do
-        bytes[i] = string.char(math.random(65, 90))
+    for i = 1, length do
+        local range = nameRanges[math.random(1, #nameRanges)]
+        bytes[i] = string.char(math.random(range[1], range[2]))
     end
-    return "_NarsEdv_" .. table.concat(bytes)
+    return table.concat(bytes)
 end
+
+pcall(function()
+    local previous = sharedEnv[registryKey]
+    if typeof(previous) == "Instance" then
+        previous:Destroy()
+    end
+    sharedEnv[registryKey] = nil
+end)
 
 pcall(function()
     for _, child in ipairs(host:GetChildren()) do
@@ -62,6 +82,19 @@ pcall(function()
         end
     end
 end)
+
+local function make(class, props, parent)
+    local instance = Instance.new(class)
+    instance.Name = generateName()
+    if instance:IsA("GuiObject") then
+        instance.BorderSizePixel = 0
+    end
+    for key, value in pairs(props) do
+        instance[key] = value
+    end
+    instance.Parent = parent
+    return instance
+end
 
 local function SafeFont(name)
     local ok, font = pcall(function()
@@ -81,13 +114,16 @@ local Assets = {
     Discord = "rbxassetid://109798031608756"
 }
 
+local PlaceId = 10959918411
+local ThumbnailApi = "https://thumbnails.roblox.com/v1/places/gameicons?placeIds="
+
 local Plugins = {
     {
         Name = "Store Roblox Asset",
         Description = "Search asset store all Category Roblox models, audios, animations and assets.",
         Version = "1.4.0",
         Url = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/Store.lua",
-        Thumbnail = "rbxassetid://123479937842693",
+        Icon = "rbxassetid://135675846264061",
         Colors = {
             Color3.fromRGB(16, 185, 129),
             Color3.fromRGB(5, 100, 70),
@@ -101,7 +137,7 @@ local Plugins = {
         Description = "Voxel terrain sculpting, procedural biome generation and brush tools.",
         Version = "2.1.0",
         Url = "https://raw.githubusercontent.com/narakuhub/plugin-tools/refs/heads/main/tools/terrain2.lua",
-        Thumbnail = "rbxassetid://123479937842693",
+        Icon = "rbxassetid://105315495740588",
         Colors = {
             Color3.fromRGB(34, 197, 94),
             Color3.fromRGB(21, 128, 61),
@@ -115,7 +151,7 @@ local Plugins = {
         Description = "Lightweight code editor for Lua/Luau script development with syntax auto-complete.",
         Version = "4.2.0",
         Url = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/Ecode.lua",
-        Thumbnail = "rbxassetid://123479937842693",
+        Icon = "rbxassetid://106783148545356",
         Colors = {
             Color3.fromRGB(168, 85, 247),
             Color3.fromRGB(88, 28, 135),
@@ -129,7 +165,7 @@ local Plugins = {
         Description = "FlyCameraFokus controller with target anchor focus.",
         Version = "1.2.0",
         Url = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/FlyCameraFokus.lua",
-        Thumbnail = "rbxassetid://123479937842693",
+        Icon = "rbxassetid://134967053164645",
         Colors = {
             Color3.fromRGB(99, 102, 241),
             Color3.fromRGB(49, 46, 129),
@@ -143,7 +179,7 @@ local Plugins = {
         Description = "Fly caracter utility with speed controls.",
         Version = "2.0.0",
         Url = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/FlyCaracter.lua",
-        Thumbnail = "rbxassetid://123479937842693",
+        Icon = "rbxassetid://114551690399915",
         Colors = {
             Color3.fromRGB(245, 158, 11),
             Color3.fromRGB(146, 64, 14),
@@ -157,7 +193,7 @@ local Plugins = {
         Description = "Directly import and parse model data from .rbxm, .rbxl, and .rbxlx files.",
         Version = "1.5.0",
         Url = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/Importer.lua",
-        Thumbnail = "rbxassetid://123479937842693",
+        Icon = "rbxassetid://121435581993566",
         Colors = {
             Color3.fromRGB(249, 115, 22),
             Color3.fromRGB(154, 52, 18),
@@ -171,7 +207,7 @@ local Plugins = {
         Description = "Search and insert 1000+ vector Lucide icons directly into Roblox UI.",
         Version = "1.1.0",
         Url = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/lucideIcons.lua",
-        Thumbnail = "rbxassetid://123479937842693",
+        Icon = "rbxassetid://130721982350900",
         Colors = {
             Color3.fromRGB(244, 63, 94),
             Color3.fromRGB(159, 18, 57),
@@ -182,21 +218,49 @@ local Plugins = {
     }
 }
 
-local function applyCorner(parent, radius)
-    local corner = Instance.new("UICorner")
-    corner.Name = "UICorner"
-    corner.CornerRadius = UDim.new(0, radius or 8)
-    corner.Parent = parent
-    return corner
+local CardWidth = 180
+local CardHeight = 196
+local SlotSpacing = 110
+local White = Color3.fromRGB(255, 255, 255)
+
+local LoopTweens = {}
+
+local function tweenProps(instance, info, props)
+    local ok, tween = pcall(TweenService.Create, TweenService, instance, info, props)
+    if ok and tween then
+        tween:Play()
+        return tween
+    end
+    for key, value in pairs(props) do
+        pcall(function()
+            instance[key] = value
+        end)
+    end
+    return nil
 end
 
-local function applyShadow(parent, blurRadius, offset, transparency)
+local function loopTween(instance, duration, props)
+    local tween = TweenService:Create(
+        instance,
+        TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true),
+        props
+    )
+    tween:Play()
+    table.insert(LoopTweens, tween)
+    return tween
+end
+
+local function applyCorner(parent, radius)
+    return make("UICorner", { CornerRadius = UDim.new(0, radius or 8) }, parent)
+end
+
+local function applyShadow(parent, blurRadius, offset, transparency, color)
     local ok, shadow = pcall(function()
         local s = Instance.new("UIShadow")
-        s.Name = "UIShadow"
+        s.Name = generateName()
         s.ZIndex = -1
         s.BlurRadius = UDim.new(0, blurRadius or 12)
-        s.Color = Color3.fromRGB(0, 0, 0)
+        s.Color = color or Color3.fromRGB(0, 0, 0)
         s.Enabled = true
         s.Offset = offset or UDim2.fromOffset(0, 4)
         s.Spread = UDim2.fromScale(0, 0)
@@ -204,36 +268,92 @@ local function applyShadow(parent, blurRadius, offset, transparency)
         s.Parent = parent
         return s
     end)
-    if not ok or not shadow then
-        pcall(function()
-            local img = Instance.new("ImageLabel")
-            img.Name = generateName()
-            img.AnchorPoint = Vector2.new(0.5, 0.5)
-            img.Position = UDim2.new(0.5, 0, 0.5, 3)
-            img.Size = UDim2.new(1, 24, 1, 24)
-            img.BackgroundTransparency = 1
-            img.Image = "rbxassetid://1316045217"
-            img.ImageColor3 = Color3.fromRGB(0, 0, 0)
-            img.ImageTransparency = transparency or 0.5
-            img.ScaleType = Enum.ScaleType.Slice
-            img.SliceCenter = Rect.new(10, 10, 118, 118)
-            img.ZIndex = math.max(0, (parent.ZIndex or 1) - 1)
-            img.Parent = parent.Parent
-        end)
+    if ok then
+        return shadow
     end
+    return nil
 end
 
 local function applyGradient(parent, colors, rotation)
-    local grad = Instance.new("UIGradient")
-    grad.Name = generateName()
-    grad.Rotation = rotation or 135
-    grad.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, colors[1]),
-        ColorSequenceKeypoint.new(0.5, colors[2]),
-        ColorSequenceKeypoint.new(1, colors[3])
-    })
-    grad.Parent = parent
-    return grad
+    return make("UIGradient", {
+        Rotation = rotation or 135,
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, colors[1]),
+            ColorSequenceKeypoint.new(0.5, colors[2]),
+            ColorSequenceKeypoint.new(1, colors[3])
+        })
+    }, parent)
+end
+
+local function bindInteract(button, hoverScale, pressScale)
+    local scale = make("UIScale", { Scale = 1 }, button)
+    local hovering = false
+    local function to(value, duration, style)
+        TweenService:Create(scale, TweenInfo.new(duration, style or Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Scale = value
+        }):Play()
+    end
+    button.MouseEnter:Connect(function()
+        hovering = true
+        to(hoverScale, 0.18)
+    end)
+    button.MouseLeave:Connect(function()
+        hovering = false
+        to(1, 0.18)
+    end)
+    button.MouseButton1Down:Connect(function()
+        to(pressScale, 0.08)
+    end)
+    button.MouseButton1Up:Connect(function()
+        to(hovering and hoverScale or 1, 0.16, Enum.EasingStyle.Back)
+    end)
+    return scale
+end
+
+local ThumbCache = {}
+
+local function resolveThumbnail(placeId, callback)
+    local entry = ThumbCache[placeId]
+    if entry then
+        if entry.Done then
+            callback(entry.Asset)
+        else
+            table.insert(entry.Waiters, callback)
+        end
+        return
+    end
+    entry = { Done = false, Asset = Assets.Banner, Waiters = { callback } }
+    ThumbCache[placeId] = entry
+    task.spawn(function()
+        for _ = 1, 3 do
+            local resolved = nil
+            pcall(function()
+                local body = game:HttpGet(ThumbnailApi .. placeId .. "&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false")
+                local decoded = HttpService:JSONDecode(body)
+                local item = decoded and decoded.data and decoded.data[1]
+                if item and type(item.imageUrl) == "string" and item.imageUrl ~= "" then
+                    local bytes = game:HttpGet(item.imageUrl)
+                    local writeFile = executorEnv.writefile
+                    local getAsset = executorEnv.getcustomasset or executorEnv.getsynasset
+                    if type(writeFile) == "function" and type(getAsset) == "function" then
+                        local fileName = "place_thumb_" .. tostring(placeId) .. ".png"
+                        writeFile(fileName, bytes)
+                        resolved = getAsset(fileName)
+                    end
+                end
+            end)
+            if resolved and resolved ~= "" then
+                entry.Asset = resolved
+                break
+            end
+            task.wait(1)
+        end
+        entry.Done = true
+        for _, waiter in ipairs(entry.Waiters) do
+            pcall(waiter, entry.Asset)
+        end
+        entry.Waiters = {}
+    end)
 end
 
 local ScreenGui = Instance.new("ScreenGui")
@@ -251,25 +371,21 @@ if not parented then
         ScreenGui.Parent = player:WaitForChild("PlayerGui")
     end)
 end
+sharedEnv[registryKey] = ScreenGui
 
-local Main = Instance.new("Frame")
-Main.Name = generateName()
-Main.Size = UDim2.new(0, 420, 0, 320)
-Main.Position = UDim2.new(0.5, 0, 0.5, 0)
-Main.AnchorPoint = Vector2.new(0.5, 0.5)
-Main.BackgroundColor3 = Color3.fromRGB(13, 14, 18)
-Main.BackgroundTransparency = 0.05
-Main.BorderSizePixel = 0
-Main.ClipsDescendants = false
-Main.Parent = ScreenGui
+local Main = make("Frame", {
+    Size = UDim2.fromOffset(420, 292),
+    Position = UDim2.new(0.5, 0, 0.5, 0),
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    BackgroundColor3 = Color3.fromRGB(13, 14, 18),
+    BackgroundTransparency = 0.05,
+    ClipsDescendants = false
+}, ScreenGui)
 
 applyCorner(Main, 14)
 applyShadow(Main, 16, UDim2.fromOffset(0, 6), 0.45)
 
-local MainScale = Instance.new("UIScale")
-MainScale.Name = generateName()
-MainScale.Scale = 1.0
-MainScale.Parent = Main
+local MainScale = make("UIScale", { Scale = 1 }, Main)
 
 local userScaleFactor = 1.0
 local currentTargetScale = 1.0
@@ -280,11 +396,9 @@ local function recalculateScale()
     local responsiveScale = 1.0
     if cam and cam.ViewportSize and cam.ViewportSize.X > 0 and cam.ViewportSize.Y > 0 then
         local vp = cam.ViewportSize
-        local minFit = math.min(vp.X / 460, vp.Y / 360)
+        local minFit = math.min(vp.X / 460, vp.Y / 330)
         if minFit < 1.0 then
             responsiveScale = math.clamp(minFit, 0.6, 1.0)
-        else
-            responsiveScale = 1.0
         end
     end
     currentTargetScale = responsiveScale * userScaleFactor
@@ -296,25 +410,22 @@ pcall(function()
 end)
 recalculateScale()
 
-local MainBanner = Instance.new("ImageLabel")
-MainBanner.Name = generateName()
-MainBanner.Size = UDim2.new(1, 0, 1, 0)
-MainBanner.BackgroundTransparency = 1
-MainBanner.Image = Assets.Banner
-MainBanner.ImageTransparency = 0.58
-MainBanner.ScaleType = Enum.ScaleType.Crop
-MainBanner.ZIndex = 0
-MainBanner.Parent = Main
+local MainBanner = make("ImageLabel", {
+    Size = UDim2.new(1, 0, 1, 0),
+    BackgroundTransparency = 1,
+    Image = Assets.Banner,
+    ImageTransparency = 0.58,
+    ScaleType = Enum.ScaleType.Crop,
+    ZIndex = 0
+}, Main)
 applyCorner(MainBanner, 14)
 
-local Overlay = Instance.new("Frame")
-Overlay.Name = generateName()
-Overlay.Size = UDim2.new(1, 0, 1, 0)
-Overlay.BackgroundColor3 = Color3.fromRGB(10, 11, 15)
-Overlay.BackgroundTransparency = 0.22
-Overlay.BorderSizePixel = 0
-Overlay.ZIndex = 1
-Overlay.Parent = Main
+local Overlay = make("Frame", {
+    Size = UDim2.new(1, 0, 1, 0),
+    BackgroundColor3 = Color3.fromRGB(10, 11, 15),
+    BackgroundTransparency = 0.22,
+    ZIndex = 1
+}, Main)
 applyCorner(Overlay, 14)
 
 applyGradient(Overlay, {
@@ -323,140 +434,139 @@ applyGradient(Overlay, {
     Color3.fromRGB(8, 9, 12)
 }, 90)
 
-local Header = Instance.new("Frame")
-Header.Name = generateName()
-Header.Size = UDim2.new(1, 0, 0, 38)
-Header.BackgroundTransparency = 1
-Header.ZIndex = 10
-Header.Parent = Main
+local Header = make("Frame", {
+    Size = UDim2.new(1, 0, 0, 38),
+    BackgroundTransparency = 1,
+    ZIndex = 10
+}, Main)
 
-local TitleContainer = Instance.new("Frame")
-TitleContainer.Name = generateName()
-TitleContainer.Size = UDim2.new(1, -210, 1, 0)
-TitleContainer.Position = UDim2.fromOffset(12, 0)
-TitleContainer.BackgroundTransparency = 1
-TitleContainer.ZIndex = 11
-TitleContainer.Parent = Header
+local TitleContainer = make("Frame", {
+    Size = UDim2.new(1, -210, 1, 0),
+    Position = UDim2.fromOffset(12, 0),
+    BackgroundTransparency = 1,
+    ZIndex = 11
+}, Header)
 
-local TitleLayout = Instance.new("UIListLayout")
-TitleLayout.Name = generateName()
-TitleLayout.FillDirection = Enum.FillDirection.Horizontal
-TitleLayout.SortOrder = Enum.SortOrder.LayoutOrder
-TitleLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-TitleLayout.Padding = UDim.new(0, 5)
-TitleLayout.Parent = TitleContainer
+make("UIListLayout", {
+    FillDirection = Enum.FillDirection.Horizontal,
+    SortOrder = Enum.SortOrder.LayoutOrder,
+    VerticalAlignment = Enum.VerticalAlignment.Center,
+    Padding = UDim.new(0, 6)
+}, TitleContainer)
 
-local TitleMain = Instance.new("TextLabel")
-TitleMain.Name = generateName()
-TitleMain.LayoutOrder = 1
-TitleMain.AutomaticSize = Enum.AutomaticSize.X
-TitleMain.Size = UDim2.fromOffset(0, 38)
-TitleMain.BackgroundTransparency = 1
-TitleMain.Text = "NarsEdv"
-TitleMain.TextColor3 = Color3.fromRGB(245, 246, 250)
-TitleMain.TextSize = 14
-TitleMain.Font = Medium
-TitleMain.TextXAlignment = Enum.TextXAlignment.Left
-TitleMain.ZIndex = 11
-TitleMain.Parent = TitleContainer
+local LogoHolder = make("Frame", {
+    LayoutOrder = 1,
+    Size = UDim2.fromOffset(20, 38),
+    BackgroundTransparency = 1,
+    ZIndex = 11
+}, TitleContainer)
 
-local TitleDivider = Instance.new("Frame")
-TitleDivider.Name = generateName()
-TitleDivider.LayoutOrder = 2
-TitleDivider.Size = UDim2.fromOffset(1, 13)
-TitleDivider.BackgroundColor3 = Color3.fromRGB(110, 115, 135)
-TitleDivider.BackgroundTransparency = 0.35
-TitleDivider.BorderSizePixel = 0
-TitleDivider.ZIndex = 11
-TitleDivider.Parent = TitleContainer
+local Logo = make("ImageLabel", {
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    Position = UDim2.new(0.5, 0, 0.5, 0),
+    Size = UDim2.fromOffset(18, 18),
+    BackgroundTransparency = 1,
+    Image = Assets.Open,
+    ImageColor3 = White,
+    ScaleType = Enum.ScaleType.Fit,
+    ZIndex = 12
+}, LogoHolder)
 
-local TitleSub = Instance.new("TextLabel")
-TitleSub.Name = generateName()
-TitleSub.LayoutOrder = 3
-TitleSub.AutomaticSize = Enum.AutomaticSize.X
-TitleSub.Size = UDim2.fromOffset(0, 38)
-TitleSub.BackgroundTransparency = 1
-TitleSub.Text = "Plugin"
-TitleSub.TextColor3 = Color3.fromRGB(180, 185, 200)
-TitleSub.TextSize = 14
-TitleSub.Font = Medium
-TitleSub.TextXAlignment = Enum.TextXAlignment.Left
-TitleSub.ZIndex = 11
-TitleSub.Parent = TitleContainer
+loopTween(Logo, 1.1, { Position = UDim2.new(0.5, 0, 0.5, -3) })
 
-local DiscordButton = Instance.new("ImageButton")
-DiscordButton.Name = generateName()
-DiscordButton.AnchorPoint = Vector2.new(1, 0.5)
-DiscordButton.Position = UDim2.new(1, -38, 0.5, 0)
-DiscordButton.Size = UDim2.fromOffset(140, 22)
-DiscordButton.BackgroundColor3 = Color3.fromRGB(59, 130, 246)
-DiscordButton.BorderSizePixel = 0
-DiscordButton.AutoButtonColor = false
-DiscordButton.ZIndex = 12
-DiscordButton.Parent = Header
+local TitleMain = make("TextLabel", {
+    LayoutOrder = 2,
+    AutomaticSize = Enum.AutomaticSize.X,
+    Size = UDim2.fromOffset(0, 38),
+    BackgroundTransparency = 1,
+    Text = "Nars Edv",
+    TextColor3 = White,
+    TextSize = 14,
+    Font = Medium,
+    TextXAlignment = Enum.TextXAlignment.Left,
+    ZIndex = 11
+}, TitleContainer)
+
+loopTween(TitleMain, 1.3, { TextTransparency = 0.55 })
+
+local TitleSub = make("TextLabel", {
+    LayoutOrder = 3,
+    AutomaticSize = Enum.AutomaticSize.X,
+    Size = UDim2.fromOffset(0, 38),
+    BackgroundTransparency = 1,
+    Text = "Plugin",
+    TextColor3 = White,
+    TextSize = 14,
+    Font = Medium,
+    TextXAlignment = Enum.TextXAlignment.Left,
+    ZIndex = 11
+}, TitleContainer)
+
+make("UIGradient", {
+    Rotation = 0,
+    Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(56, 189, 248)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(167, 139, 250)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(244, 114, 182))
+    })
+}, TitleSub)
+
+local DiscordButton = make("ImageButton", {
+    AnchorPoint = Vector2.new(1, 0.5),
+    Position = UDim2.new(1, -38, 0.5, 0),
+    Size = UDim2.fromOffset(140, 22),
+    BackgroundColor3 = Color3.fromRGB(59, 130, 246),
+    AutoButtonColor = false,
+    ZIndex = 12
+}, Header)
 applyCorner(DiscordButton, 6)
 
-local DiscordGradient = Instance.new("UIGradient")
-DiscordGradient.Name = generateName()
-DiscordGradient.Rotation = 90
-DiscordGradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(59, 130, 246)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(139, 92, 246))
-})
-DiscordGradient.Parent = DiscordButton
+make("UIGradient", {
+    Rotation = 90,
+    Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(59, 130, 246)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(139, 92, 246))
+    })
+}, DiscordButton)
 
-local DiscordPadding = Instance.new("UIPadding")
-DiscordPadding.Name = generateName()
-DiscordPadding.PaddingLeft = UDim.new(0, 8)
-DiscordPadding.PaddingRight = UDim.new(0, 8)
-DiscordPadding.Parent = DiscordButton
+make("UIPadding", {
+    PaddingLeft = UDim.new(0, 8),
+    PaddingRight = UDim.new(0, 8)
+}, DiscordButton)
 
-local DiscordLayout = Instance.new("UIListLayout")
-DiscordLayout.Name = generateName()
-DiscordLayout.FillDirection = Enum.FillDirection.Horizontal
-DiscordLayout.SortOrder = Enum.SortOrder.LayoutOrder
-DiscordLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-DiscordLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-DiscordLayout.Padding = UDim.new(0, 6)
-DiscordLayout.Parent = DiscordButton
+make("UIListLayout", {
+    FillDirection = Enum.FillDirection.Horizontal,
+    SortOrder = Enum.SortOrder.LayoutOrder,
+    VerticalAlignment = Enum.VerticalAlignment.Center,
+    HorizontalAlignment = Enum.HorizontalAlignment.Center,
+    Padding = UDim.new(0, 6)
+}, DiscordButton)
 
-local DiscordIcon = Instance.new("ImageLabel")
-DiscordIcon.Name = generateName()
-DiscordIcon.LayoutOrder = 1
-DiscordIcon.Size = UDim2.fromOffset(14, 14)
-DiscordIcon.BackgroundTransparency = 1
-DiscordIcon.Image = Assets.Discord
-DiscordIcon.ImageColor3 = Color3.fromRGB(255, 255, 255)
-DiscordIcon.ScaleType = Enum.ScaleType.Fit
-DiscordIcon.ZIndex = 13
-DiscordIcon.Parent = DiscordButton
+make("ImageLabel", {
+    LayoutOrder = 1,
+    Size = UDim2.fromOffset(14, 14),
+    BackgroundTransparency = 1,
+    Image = Assets.Discord,
+    ImageColor3 = White,
+    ScaleType = Enum.ScaleType.Fit,
+    ZIndex = 13
+}, DiscordButton)
 
-local DiscordText = Instance.new("TextLabel")
-DiscordText.Name = generateName()
-DiscordText.LayoutOrder = 2
-DiscordText.Size = UDim2.fromOffset(0, 22)
-DiscordText.AutomaticSize = Enum.AutomaticSize.X
-DiscordText.BackgroundTransparency = 1
-DiscordText.Text = "discord.gg/NarsEdv"
-DiscordText.TextColor3 = Color3.fromRGB(255, 255, 255)
-DiscordText.TextSize = 11
-DiscordText.Font = Medium
-DiscordText.ZIndex = 13
-DiscordText.Parent = DiscordButton
+local DiscordText = make("TextLabel", {
+    LayoutOrder = 2,
+    Size = UDim2.fromOffset(0, 22),
+    AutomaticSize = Enum.AutomaticSize.X,
+    BackgroundTransparency = 1,
+    Text = "discord.gg/NarsEdv",
+    TextColor3 = White,
+    TextSize = 11,
+    Font = Medium,
+    ZIndex = 13
+}, DiscordButton)
 
 local discordInviteUrl = "https://discord.gg/6GmpsmNvY"
 
-DiscordButton.MouseEnter:Connect(function()
-    TweenService:Create(DiscordButton, TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        Size = UDim2.fromOffset(142, 23)
-    }):Play()
-end)
-
-DiscordButton.MouseLeave:Connect(function()
-    TweenService:Create(DiscordButton, TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        Size = UDim2.fromOffset(140, 22)
-    }):Play()
-end)
+bindInteract(DiscordButton, 1.03, 0.96)
 
 DiscordButton.MouseButton1Click:Connect(function()
     local setClipboard = executorEnv.setclipboard or executorEnv.toclipboard or executorEnv.set_clipboard
@@ -468,7 +578,7 @@ DiscordButton.MouseButton1Click:Connect(function()
         pcall(setClipboard, discordInviteUrl)
     end
 
-    local original = DiscordText.Text
+    local original = "discord.gg/NarsEdv"
     DiscordText.Text = "COPIED INVITE!"
     task.delay(1.5, function()
         if DiscordText.Parent then
@@ -477,24 +587,25 @@ DiscordButton.MouseButton1Click:Connect(function()
     end)
 end)
 
-local CloseButton = Instance.new("ImageButton")
-CloseButton.Name = generateName()
-CloseButton.AnchorPoint = Vector2.new(0, 0.5)
-CloseButton.Size = UDim2.fromOffset(20, 20)
-CloseButton.Position = UDim2.new(1, -30, 0.5, 0)
-CloseButton.BackgroundColor3 = Color3.fromRGB(13, 14, 18)
-CloseButton.BackgroundTransparency = 0
-CloseButton.Image = Assets.Close
-CloseButton.ImageColor3 = Color3.fromRGB(210, 212, 225)
-CloseButton.ScaleType = Enum.ScaleType.Fit
-CloseButton.ZIndex = 12
-CloseButton.Parent = Header
+local CloseButton = make("ImageButton", {
+    AnchorPoint = Vector2.new(0, 0.5),
+    Size = UDim2.fromOffset(20, 20),
+    Position = UDim2.new(1, -30, 0.5, 0),
+    BackgroundColor3 = Color3.fromRGB(13, 14, 18),
+    BackgroundTransparency = 0,
+    Image = Assets.Close,
+    ImageColor3 = Color3.fromRGB(210, 212, 225),
+    ScaleType = Enum.ScaleType.Fit,
+    AutoButtonColor = false,
+    ZIndex = 12
+}, Header)
 applyCorner(CloseButton, 6)
+bindInteract(CloseButton, 1.1, 0.9)
 
 CloseButton.MouseEnter:Connect(function()
     TweenService:Create(CloseButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
         BackgroundColor3 = Color3.fromRGB(225, 29, 72),
-        ImageColor3 = Color3.fromRGB(255, 255, 255)
+        ImageColor3 = White
     }):Play()
 end)
 
@@ -505,51 +616,46 @@ CloseButton.MouseLeave:Connect(function()
     }):Play()
 end)
 
-local Stage = Instance.new("Frame")
-Stage.Name = generateName()
-Stage.Size = UDim2.new(1, -16, 0, 246)
-Stage.Position = UDim2.fromOffset(8, 42)
-Stage.BackgroundTransparency = 1
-Stage.BorderSizePixel = 0
-Stage.ClipsDescendants = true
-Stage.ZIndex = 2
-Stage.Parent = Main
+local Stage = make("Frame", {
+    Size = UDim2.new(1, -16, 0, 226),
+    Position = UDim2.fromOffset(8, 38),
+    BackgroundTransparency = 1,
+    ClipsDescendants = true,
+    ZIndex = 2
+}, Main)
 
 local Current = 1
 local Cards = {}
+local Dots = {}
 local ActiveTweens = {}
 
 local function createPluginCard(index, plugin)
-    local Card = Instance.new("Frame")
-    Card.Name = generateName()
-    Card.Size = UDim2.fromOffset(180, 236)
-    Card.AnchorPoint = Vector2.new(0.5, 0.5)
-    Card.Position = UDim2.new(0.5, 0, 0.5, 0)
-    Card.BackgroundColor3 = plugin.Colors[2]
-    Card.BorderSizePixel = 0
-    Card.ClipsDescendants = true
-    Card.ZIndex = 2
-    Card.Parent = Stage
+    local Card = make("Frame", {
+        Size = UDim2.fromOffset(CardWidth, CardHeight),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        BackgroundColor3 = plugin.Colors[2],
+        ClipsDescendants = true,
+        ZIndex = 2
+    }, Stage)
 
     applyCorner(Card, 10)
     applyGradient(Card, plugin.Colors, 140)
-    applyShadow(Card, 12, UDim2.fromOffset(0, 5), 0.45)
+    local CardScale = make("UIScale", { Scale = 1 }, Card)
+    local CardShadow = applyShadow(Card, 14, UDim2.fromOffset(0, 5), 1, plugin.Colors[1])
 
-    local Thumbnail = Instance.new("ImageLabel")
-    Thumbnail.Name = generateName()
-    Thumbnail.Size = UDim2.new(1, 0, 0, 108)
-    Thumbnail.Position = UDim2.fromOffset(0, 0)
-    Thumbnail.BackgroundColor3 = Color3.fromRGB(15, 17, 23)
-    Thumbnail.BackgroundTransparency = 0.2
-    Thumbnail.BorderSizePixel = 0
-    Thumbnail.Image = plugin.Thumbnail or Assets.Banner
-    Thumbnail.ScaleType = Enum.ScaleType.Crop
-    Thumbnail.ZIndex = 3
-    Thumbnail.Parent = Card
+    local Thumbnail = make("ImageLabel", {
+        Size = UDim2.new(1, 0, 0, 84),
+        Position = UDim2.fromOffset(0, 0),
+        BackgroundColor3 = Color3.fromRGB(15, 17, 23),
+        BackgroundTransparency = 0.2,
+        Image = "",
+        ImageTransparency = 1,
+        ScaleType = Enum.ScaleType.Crop,
+        ZIndex = 3
+    }, Card)
 
-    local ThumbCorner = Instance.new("UICorner")
-    ThumbCorner.Name = "UICorner"
-    ThumbCorner.CornerRadius = UDim.new(0, 10)
+    local ThumbCorner = make("UICorner", { CornerRadius = UDim.new(0, 10) }, nil)
     pcall(function()
         ThumbCorner.TopLeftRadius = UDim.new(0, 10)
         ThumbCorner.TopRightRadius = UDim.new(0, 10)
@@ -558,85 +664,105 @@ local function createPluginCard(index, plugin)
     end)
     ThumbCorner.Parent = Thumbnail
 
-    local ThumbOverlay = Instance.new("Frame")
-    ThumbOverlay.Name = generateName()
-    ThumbOverlay.Size = UDim2.new(1, 0, 0, 28)
-    ThumbOverlay.Position = UDim2.new(0, 0, 1, -28)
-    ThumbOverlay.BackgroundColor3 = plugin.Colors[3]
-    ThumbOverlay.BackgroundTransparency = 0.55
-    ThumbOverlay.BorderSizePixel = 0
-    ThumbOverlay.ZIndex = 3
-    ThumbOverlay.Parent = Thumbnail
+    local ThumbOverlay = make("Frame", {
+        Size = UDim2.new(1, 0, 0, 24),
+        Position = UDim2.new(0, 0, 1, -24),
+        BackgroundColor3 = plugin.Colors[3],
+        BackgroundTransparency = 0.55,
+        ZIndex = 4
+    }, Thumbnail)
 
-    local ThumbGradient = Instance.new("UIGradient")
-    ThumbGradient.Rotation = 90
-    ThumbGradient.Transparency = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 1),
-        NumberSequenceKeypoint.new(0.5, 0.75),
-        NumberSequenceKeypoint.new(1, 0.55)
-    })
-    ThumbGradient.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, plugin.Colors[1]),
-        ColorSequenceKeypoint.new(1, plugin.Colors[3])
-    })
-    ThumbGradient.Parent = ThumbOverlay
+    make("UIGradient", {
+        Rotation = 90,
+        Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 1),
+            NumberSequenceKeypoint.new(0.5, 0.75),
+            NumberSequenceKeypoint.new(1, 0.55)
+        }),
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, plugin.Colors[1]),
+            ColorSequenceKeypoint.new(1, plugin.Colors[3])
+        })
+    }, ThumbOverlay)
 
-    local Name = Instance.new("TextLabel")
-    Name.Name = generateName()
-    Name.Size = UDim2.new(1, -20, 0, 20)
-    Name.Position = UDim2.fromOffset(10, 114)
-    Name.BackgroundTransparency = 1
-    Name.Text = plugin.Name
-    Name.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Name.TextSize = 13
-    Name.Font = Medium
-    Name.TextXAlignment = Enum.TextXAlignment.Left
-    Name.TextTruncate = Enum.TextTruncate.AtEnd
-    Name.ZIndex = 4
-    Name.Parent = Card
+    resolveThumbnail(plugin.PlaceId or PlaceId, function(asset)
+        if Thumbnail.Parent then
+            Thumbnail.Image = asset
+            tweenProps(Thumbnail, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                ImageTransparency = 0
+            })
+        end
+    end)
 
-    local Desc = Instance.new("TextLabel")
-    Desc.Name = generateName()
-    Desc.Size = UDim2.new(1, -20, 0, 34)
-    Desc.Position = UDim2.fromOffset(10, 136)
-    Desc.BackgroundTransparency = 1
-    Desc.Text = plugin.Description
-    Desc.TextColor3 = Color3.fromRGB(168, 174, 192)
-    Desc.TextSize = 12
-    Desc.Font = Medium
-    Desc.TextWrapped = true
-    Desc.TextXAlignment = Enum.TextXAlignment.Left
-    Desc.TextYAlignment = Enum.TextYAlignment.Top
-    Desc.ZIndex = 4
-    Desc.Parent = Card
+    local hasIcon = type(plugin.Icon) == "string" and plugin.Icon ~= ""
+    local nameX = 10
 
-    local Ver = Instance.new("TextLabel")
-    Ver.Name = generateName()
-    Ver.Size = UDim2.new(1, -20, 0, 14)
-    Ver.Position = UDim2.fromOffset(10, 172)
-    Ver.BackgroundTransparency = 1
-    Ver.Text = "BUILD " .. plugin.Version
-    Ver.TextColor3 = Color3.fromRGB(130, 136, 154)
-    Ver.TextSize = 10
-    Ver.Font = Medium
-    Ver.TextXAlignment = Enum.TextXAlignment.Left
-    Ver.ZIndex = 4
-    Ver.Parent = Card
+    if hasIcon then
+        make("ImageLabel", {
+            Size = UDim2.fromOffset(14, 14),
+            Position = UDim2.fromOffset(10, 93),
+            BackgroundTransparency = 1,
+            Image = plugin.Icon,
+            ImageColor3 = White,
+            ScaleType = Enum.ScaleType.Fit,
+            ZIndex = 5
+        }, Card)
+        nameX = 30
+    end
 
-    local Execute = Instance.new("TextButton")
-    Execute.Name = generateName()
-    Execute.Size = UDim2.new(1, -20, 0, 26)
-    Execute.Position = UDim2.new(0, 10, 1, -36)
-    Execute.BackgroundColor3 = plugin.ButtonColor or Color3.fromRGB(240, 242, 248)
-    Execute.BorderSizePixel = 0
-    Execute.Text = "EXECUTE"
-    Execute.TextColor3 = plugin.ButtonTextColor or Color3.fromRGB(15, 17, 23)
-    Execute.TextSize = 12
-    Execute.Font = Medium
-    Execute.AutoButtonColor = false
-    Execute.ZIndex = 6
-    Execute.Parent = Card
+    make("TextLabel", {
+        Size = UDim2.new(1, -(nameX + 10), 0, 20),
+        Position = UDim2.fromOffset(nameX, 90),
+        BackgroundTransparency = 1,
+        Text = plugin.Name,
+        TextColor3 = White,
+        TextSize = 13,
+        Font = Medium,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextTruncate = Enum.TextTruncate.AtEnd,
+        ZIndex = 5
+    }, Card)
+
+    make("TextLabel", {
+        Size = UDim2.new(1, -20, 0, 28),
+        Position = UDim2.fromOffset(10, 112),
+        BackgroundTransparency = 1,
+        Text = plugin.Description,
+        TextColor3 = Color3.fromRGB(168, 174, 192),
+        TextSize = 11,
+        Font = Medium,
+        TextWrapped = true,
+        TextTruncate = Enum.TextTruncate.AtEnd,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextYAlignment = Enum.TextYAlignment.Top,
+        ZIndex = 5
+    }, Card)
+
+    make("TextLabel", {
+        Size = UDim2.new(1, -20, 0, 14),
+        Position = UDim2.fromOffset(10, 142),
+        BackgroundTransparency = 1,
+        Text = "BUILD " .. plugin.Version,
+        TextColor3 = Color3.fromRGB(130, 136, 154),
+        TextSize = 10,
+        Font = Medium,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 5
+    }, Card)
+
+    local Execute = make("TextButton", {
+        Size = UDim2.new(1, -20, 0, 26),
+        Position = UDim2.new(0, 10, 1, -36),
+        BackgroundColor3 = plugin.ButtonColor or Color3.fromRGB(240, 242, 248),
+        Text = "EXECUTE",
+        TextColor3 = plugin.ButtonTextColor or Color3.fromRGB(15, 17, 23),
+        TextSize = 12,
+        Font = Medium,
+        AutoButtonColor = false,
+        ZIndex = 6
+    }, Card)
     applyCorner(Execute, 6)
+    bindInteract(Execute, 1.03, 0.95)
 
     Card.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -648,7 +774,7 @@ local function createPluginCard(index, plugin)
 
     Execute.MouseEnter:Connect(function()
         TweenService:Create(Execute, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            BackgroundColor3 = White
         }):Play()
     end)
 
@@ -658,23 +784,18 @@ local function createPluginCard(index, plugin)
         }):Play()
     end)
 
+    local busy = false
+
     Execute.MouseButton1Click:Connect(function()
-        TweenService:Create(Execute, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Size = UDim2.new(1, -24, 0, 24),
-            Position = UDim2.new(0, 12, 1, -35)
-        }):Play()
-        task.delay(0.08, function()
-            if Execute.Parent then
-                TweenService:Create(Execute, TweenInfo.new(0.12, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-                    Size = UDim2.new(1, -20, 0, 26),
-                    Position = UDim2.new(0, 10, 1, -36)
-                }):Play()
-            end
-        end)
+        if busy then
+            return
+        end
+        busy = true
 
         if not plugin.Url or plugin.Url == "" then
             Execute.Text = "NO URL"
             task.delay(1.5, function()
+                busy = false
                 if Execute.Parent then
                     Execute.Text = "EXECUTE"
                 end
@@ -695,360 +816,72 @@ local function createPluginCard(index, plugin)
             if success then
                 Execute.Text = "SUCCESS"
             else
-                warn("[NarsEdv ERROR] " .. tostring(plugin.Name) .. ": " .. tostring(result))
+                warn("[server] " .. tostring(plugin.Name) .. ": " .. tostring(result))
                 Execute.Text = "FAILED"
             end
 
             task.wait(1.8)
+            busy = false
             if Execute.Parent then
                 Execute.Text = "EXECUTE"
             end
         end)
     end)
 
-    Cards[index] = Card
+    Cards[index] = {
+        Frame = Card,
+        Scale = CardScale,
+        Shadow = CardShadow
+    }
 end
 
 for i, plugin in ipairs(Plugins) do
     createPluginCard(i, plugin)
 end
 
-local Footer = Instance.new("Frame")
-Footer.Name = generateName()
-Footer.Size = UDim2.new(1, 0, 0, 30)
-Footer.Position = UDim2.new(0, 0, 1, -30)
-Footer.BackgroundTransparency = 1
-Footer.ZIndex = 8
-Footer.Parent = Main
+local Footer = make("Frame", {
+    Size = UDim2.new(1, 0, 0, 28),
+    Position = UDim2.new(0, 0, 1, -28),
+    BackgroundTransparency = 1,
+    ZIndex = 8
+}, Main)
 
-local Counter = Instance.new("TextLabel")
-Counter.Name = generateName()
-Counter.Size = UDim2.fromOffset(90, 20)
-Counter.Position = UDim2.new(0.5, 0, 0.5, 0)
-Counter.AnchorPoint = Vector2.new(0.5, 0.5)
-Counter.BackgroundTransparency = 1
-Counter.TextColor3 = Color3.fromRGB(180, 185, 200)
-Counter.TextSize = 12
-Counter.Font = Medium
-Counter.ZIndex = 9
-Counter.Parent = Footer
+make("UIListLayout", {
+    FillDirection = Enum.FillDirection.Horizontal,
+    SortOrder = Enum.SortOrder.LayoutOrder,
+    VerticalAlignment = Enum.VerticalAlignment.Center,
+    HorizontalAlignment = Enum.HorizontalAlignment.Center,
+    Padding = UDim.new(0, 6)
+}, Footer)
 
-local function updateCounter()
-    Counter.Text = string.format("%02d  /  %02d", Current, #Plugins)
-end
+local DotIdle = Color3.fromRGB(200, 205, 220)
 
-local function getOffset(index)
-    local total = #Plugins
-    return ((index - Current + math.floor(total / 2)) % total) - math.floor(total / 2)
-end
-
-local function updateCarousel(animated)
-    for i, Card in ipairs(Cards) do
-        local offset = getOffset(i)
-        local distance = math.abs(offset)
-
-        if ActiveTweens[Card] then
-            ActiveTweens[Card]:Cancel()
-            ActiveTweens[Card] = nil
+for i, plugin in ipairs(Plugins) do
+    local Dot = make("TextButton", {
+        LayoutOrder = i,
+        Size = UDim2.fromOffset(6, 6),
+        BackgroundColor3 = DotIdle,
+        BackgroundTransparency = 0.78,
+        Text = "",
+        AutoButtonColor = false,
+        ZIndex = 9
+    }, Footer)
+    applyCorner(Dot, 999)
+    Dot.MouseButton1Click:Connect(function()
+        if Current ~= i then
+            GUI:GoTo(i)
         end
-
-        if distance > 2 then
-            if animated and Card.Visible then
-                local hideTween = TweenService:Create(
-                    Card,
-                    TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                    { BackgroundTransparency = 1 }
-                )
-                hideTween:Play()
-                hideTween.Completed:Connect(function()
-                    if math.abs(getOffset(i)) > 2 then
-                        Card.Visible = false
-                    end
-                end)
-            else
-                Card.Visible = false
-            end
-        else
-            Card.Visible = true
-
-            local width = offset == 0 and 180 or (distance == 1 and 148 or 118)
-            local height = offset == 0 and 236 or (distance == 1 and 194 or 156)
-            local xOffset = offset * 110
-            local rotation = offset * 11
-            local zIndex = 25 - distance * 5
-            local transparency = offset == 0 and 0 or (distance == 1 and 0.12 or 0.38)
-
-            Card.ZIndex = zIndex
-            for _, child in ipairs(Card:GetChildren()) do
-                if child:IsA("GuiObject") and child.Name ~= "UIShadow" then
-                    child.ZIndex = zIndex + 1
-                end
-            end
-
-            local targetProps = {
-                Position = UDim2.new(0.5, xOffset, 0.5, 0),
-                Size = UDim2.fromOffset(width, height),
-                Rotation = rotation,
-                BackgroundTransparency = transparency
-            }
-
-            if animated then
-                local tween = TweenService:Create(
-                    Card,
-                    TweenInfo.new(0.42, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out),
-                    targetProps
-                )
-                ActiveTweens[Card] = tween
-                tween:Play()
-                tween.Completed:Connect(function()
-                    if ActiveTweens[Card] == tween then
-                        ActiveTweens[Card] = nil
-                    end
-                end)
-            else
-                Card.Position = targetProps.Position
-                Card.Size = targetProps.Size
-                Card.Rotation = targetProps.Rotation
-                Card.BackgroundTransparency = targetProps.BackgroundTransparency
-            end
-        end
-    end
-end
-
-local function navigate(direction)
-    Current = ((Current - 1 + direction) % #Plugins) + 1
-    updateCarousel(true)
-    updateCounter()
-end
-
-local function createArrow(name, image, position, direction)
-    local Button = Instance.new("ImageButton")
-    Button.Name = generateName()
-    Button.Size = UDim2.fromOffset(22, 22)
-    Button.Position = position
-    Button.AnchorPoint = Vector2.new(0.5, 0.5)
-    Button.BackgroundColor3 = Color3.fromRGB(20, 22, 30)
-    Button.BackgroundTransparency = 0.5
-    Button.Image = image
-    Button.ImageColor3 = Color3.fromRGB(240, 242, 250)
-    Button.ScaleType = Enum.ScaleType.Fit
-    Button.ZIndex = 45
-    Button.Parent = Stage
-    applyCorner(Button, 999)
-
-    Button.MouseEnter:Connect(function()
-        TweenService:Create(Button, TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            BackgroundColor3 = Color3.fromRGB(38, 42, 58),
-            BackgroundTransparency = 0.2,
-            ImageColor3 = Color3.fromRGB(255, 255, 255)
-        }):Play()
     end)
+    Dots[i] = Dot
+end
 
-    Button.MouseLeave:Connect(function()
-        TweenService:Create(Button, TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            BackgroundColor3 = Color3.fromRGB(20, 22, 30),
-            BackgroundTransparency = 0.5,
-            ImageColor3 = Color3.fromRGB(240, 242, 250)
+local function updateDots()
+    for i, Dot in ipairs(Dots) do
+        local active = i == Current
+        TweenService:Create(Dot, TweenInfo.new(0.28, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Size = active and UDim2.fromOffset(18, 6) or UDim2.fromOffset(6, 6),
+            BackgroundColor3 = active and (Plugins[i].ButtonColor or White) or DotIdle,
+            BackgroundTransparency = active and 0 or 0.78
         }):Play()
-    end)
-
-    Button.MouseButton1Click:Connect(function()
-        TweenService:Create(Button, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Size = UDim2.fromOffset(19, 19)
-        }):Play()
-        task.delay(0.08, function()
-            if Button.Parent then
-                TweenService:Create(Button, TweenInfo.new(0.12, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-                    Size = UDim2.fromOffset(22, 22)
-                }):Play()
-            end
-        end)
-        navigate(direction)
-    end)
-
-    return Button
-end
-
-createArrow("Prev", Assets.ArrowLeft, UDim2.new(0, 16, 0.5, 0), -1)
-createArrow("Next", Assets.ArrowRight, UDim2.new(1, -16, 0.5, 0), 1)
-
-local OpenButton = Instance.new("ImageButton")
-OpenButton.Name = generateName()
-OpenButton.Size = UDim2.fromOffset(30, 30)
-OpenButton.Position = UDim2.new(0, 20, 0.5, 0)
-OpenButton.AnchorPoint = Vector2.new(0, 0.5)
-OpenButton.BackgroundColor3 = Color3.fromRGB(20, 22, 30)
-OpenButton.BackgroundTransparency = 0.1
-OpenButton.Image = Assets.Open
-OpenButton.ImageColor3 = Color3.fromRGB(245, 246, 250)
-OpenButton.ScaleType = Enum.ScaleType.Fit
-OpenButton.Visible = false
-OpenButton.ZIndex = 60
-OpenButton.Parent = ScreenGui
-
-applyCorner(OpenButton, 8)
-applyShadow(OpenButton, 10, UDim2.fromOffset(0, 3), 0.5)
-
-local function setOpen(state)
-    IsOpen = state
-    if state then
-        Main.Visible = true
-        Main.Position = UDim2.new(0.5, 0, 0.5, 15)
-        Main.BackgroundTransparency = 1
-        MainScale.Scale = currentTargetScale
-
-        TweenService:Create(Main, TweenInfo.new(0.24, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Position = UDim2.new(0.5, 0, 0.5, 0),
-            BackgroundTransparency = 0.05
-        }):Play()
-
-        TweenService:Create(OpenButton, TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            ImageTransparency = 1,
-            BackgroundTransparency = 1
-        }):Play()
-        task.delay(0.18, function()
-            OpenButton.Visible = false
-            OpenButton.ImageTransparency = 0
-            OpenButton.BackgroundTransparency = 0.1
-        end)
-    else
-        TweenService:Create(Main, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-            Position = UDim2.new(0.5, 0, 0.5, 15),
-            BackgroundTransparency = 1
-        }):Play()
-
-        task.delay(0.2, function()
-            Main.Visible = false
-            OpenButton.Visible = true
-            OpenButton.BackgroundTransparency = 1
-            OpenButton.ImageTransparency = 1
-            TweenService:Create(OpenButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                BackgroundTransparency = 0.1,
-                ImageTransparency = 0
-            }):Play()
-        end)
     end
 end
-
-CloseButton.MouseButton1Click:Connect(function()
-    setOpen(false)
-end)
-
-local OpenDragging = false
-local OpenDragStart = nil
-local OpenStartPosition = nil
-local OpenDragInput = nil
-local OpenDragMoved = false
-
-OpenButton.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        OpenDragging = true
-        OpenDragMoved = false
-        OpenDragStart = input.Position
-        OpenStartPosition = OpenButton.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                OpenDragging = false
-            end
-        end)
-    end
-end)
-
-OpenButton.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        OpenDragInput = input
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if OpenDragging and input == OpenDragInput and OpenDragStart and OpenStartPosition then
-        local delta = input.Position - OpenDragStart
-        if math.abs(delta.X) > 4 or math.abs(delta.Y) > 4 then
-            OpenDragMoved = true
-        end
-        OpenButton.Position = UDim2.new(
-            OpenStartPosition.X.Scale,
-            OpenStartPosition.X.Offset + delta.X,
-            OpenStartPosition.Y.Scale,
-            OpenStartPosition.Y.Offset + delta.Y
-        )
-    end
-end)
-
-OpenButton.MouseButton1Click:Connect(function()
-    if not OpenDragMoved then
-        setOpen(true)
-    end
-end)
-
-local MainDragging = false
-local MainDragStart = nil
-local MainStartPosition = nil
-local MainDragInput = nil
-
-Header.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        MainDragging = true
-        MainDragStart = input.Position
-        MainStartPosition = Main.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                MainDragging = false
-            end
-        end)
-    end
-end)
-
-Header.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        MainDragInput = input
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if MainDragging and input == MainDragInput and MainDragStart and MainStartPosition then
-        local delta = input.Position - MainDragStart
-        Main.Position = UDim2.new(
-            MainStartPosition.X.Scale,
-            MainStartPosition.X.Offset + delta.X,
-            MainStartPosition.Y.Scale,
-            MainStartPosition.Y.Offset + delta.Y
-        )
-    end
-end)
-
-function GUI:GoTo(index)
-    Current = math.clamp(index, 1, #Plugins)
-    updateCarousel(true)
-    updateCounter()
-end
-
-function GUI:Next()
-    navigate(1)
-end
-
-function GUI:Previous()
-    navigate(-1)
-end
-
-function GUI:Toggle()
-    setOpen(not IsOpen)
-end
-
-function GUI:SetScale(scaleMultiplier)
-    userScaleFactor = math.clamp(scaleMultiplier, 0.5, 2.0)
-    recalculateScale()
-end
-
-function GUI:Destroy()
-    pcall(function()
-        ScreenGui:Destroy()
-    end)
-end
-
-updateCarousel(false)
-updateCounter()
-
-return GUI
