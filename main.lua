@@ -6,12 +6,12 @@ local function executeRemote(name, url)
     end)
 
     if not success then
-        warn("[NARS EDV] " .. name .. " | Download Error: " .. tostring(source))
+        warn("[server] " .. name .. " | Download Error: " .. tostring(source))
         return false
     end
 
     if type(source) ~= "string" or source == "" then
-        warn("[NARS EDV] " .. name .. " | Source is empty")
+        warn("[server] " .. name .. " | Source is empty")
         return false
     end
 
@@ -19,7 +19,7 @@ local function executeRemote(name, url)
     local compiled, callback = pcall(loadstring, source)
 
     if not compiled or type(callback) ~= "function" then
-        warn("[NARS EDV] " .. name .. " | Compile Error: " .. tostring(callback))
+        warn("[server] " .. name .. " | Compile Error: " .. tostring(callback))
         return false
     end
 
@@ -27,7 +27,7 @@ local function executeRemote(name, url)
     local executed, result = pcall(callback)
 
     if not executed then
-        warn("[NARS EDV] " .. name .. " | Runtime Error: " .. tostring(result))
+        warn("[server] " .. name .. " | Runtime Error: " .. tostring(result))
         return false
     end
 
