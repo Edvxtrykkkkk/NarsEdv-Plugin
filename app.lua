@@ -86,7 +86,7 @@ local Plugins = {
         Name = "Store Roblox Asset",
         Description = "Search asset store all Category Roblox models, audios, animations and assets.",
         Version = "1.4.0",
-        Url = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/StoreAsset.lua",
+        Url = "https://raw.githubusercontent.com/Edvxtrykkkkk/NarsEdv-Plugin/refs/heads/main/src/Store.lua",
         Thumbnail = "rbxassetid://123479937842693",
         Colors = {
             Color3.fromRGB(16, 185, 129),
