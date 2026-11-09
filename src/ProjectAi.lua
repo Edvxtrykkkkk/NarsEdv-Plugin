@@ -30,7 +30,7 @@ if not player then
 end
 
 local CONFIG = {
-    API_KEY = "",
+    API_KEY = "MODUL_APIKEY",
     MODEL = "gemini-3.8-live",
     MODEL_LABEL = "Gemini 3.8 Live",
     ENDPOINT = "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent",
