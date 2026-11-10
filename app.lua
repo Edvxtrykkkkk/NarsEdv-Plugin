@@ -203,6 +203,20 @@ local Plugins = {
         ButtonTextColor = Color3.fromRGB(40, 15, 5)
     },
     {
+        Name = "Chat AI Agent",
+        Description = "AI-powered chat assistant for Roblox development using Google Gemini. Supports intelligent conversations, coding assistance and Lua scripting.",
+        Version = "1.4.0",
+        Url = "https://cdn.luaprotect.dev/u/f1a909/NOTn64aMtSSvnGq4",
+        Icon = "rbxassetid://73167696981648",
+        Colors = {
+            Color3.fromRGB(59, 130, 246),
+            Color3.fromRGB(30, 64, 175),
+            Color3.fromRGB(15, 23, 42)
+        },
+        ButtonColor = Color3.fromRGB(59, 130, 246),
+        ButtonTextColor = Color3.fromRGB(255, 255, 255)
+    },
+    {
         Name = "Lucide Icon",
         Description = "Search and insert 1000+ vector Lucide icons directly into Roblox UI.",
         Version = "1.1.0",
